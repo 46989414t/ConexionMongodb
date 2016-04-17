@@ -1,9 +1,0 @@
-<component name="libraryTable">
-  <library name="bson-3.0.4">
-    <CLASSES>
-      <root url="jar://$USER_HOME$/MongoAndJson/bson-3.0.4.jar!/" />
-    </CLASSES>
-    <JAVADOC />
-    <SOURCES />
-  </library>
-</component>

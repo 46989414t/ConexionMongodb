@@ -31,7 +31,7 @@ public class MongoDBJDBC {
 	   try {
 		//  MongoClientURI uri = new MongoClientURI("mongodb://alberto:verano731@192.168.1.37:27017");
 		 //  mongoClient = new MongoClient (uri);
-		   mongoClient = new MongoClient(new ServerAddress("172.31.103.61"));
+		   mongoClient = new MongoClient(new ServerAddress("192.168.1.136"));
 		   System.out.println("conexion");
 
 	     // New way to get database

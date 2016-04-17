@@ -1,0 +1,12 @@
+<component name="libraryTable">
+  <library name="bson-3.0.41">
+    <CLASSES>
+      <root url="jar://$PROJECT_DIR$/Llibreria/bson-3.0.4.jar!/" />
+      <root url="jar://$PROJECT_DIR$/Llibreria/jackson-core-asl-1.9.13.jar!/" />
+      <root url="jar://$PROJECT_DIR$/Llibreria/jackson-mapper-asl-1.9.13.jar!/" />
+      <root url="jar://$PROJECT_DIR$/Llibreria/mongo-java-driver-3.2.2.jar!/" />
+    </CLASSES>
+    <JAVADOC />
+    <SOURCES />
+  </library>
+</component>
