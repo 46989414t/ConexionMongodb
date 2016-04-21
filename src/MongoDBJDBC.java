@@ -13,6 +13,7 @@ import com.mongodb.client.MongoDatabase;
 import org.codehaus.jackson.map.ObjectMapper;
 
 import static com.mongodb.client.model.Filters.eq;
+import static java.util.Arrays.asList;
 
 
 public class MongoDBJDBC {
@@ -121,6 +122,8 @@ public class MongoDBJDBC {
 		Scanner teclatStrings = new Scanner(System.in);
 		ObjectMapper mapper = new ObjectMapper();
 
+		//BasicDBObject conflictoDoc = new BasicDBObject();
+
 		Document conflictoDoc = new Document();
 
 		Conflicto conf = new Conflicto();
@@ -144,36 +147,83 @@ public class MongoDBJDBC {
 		conf.setHeridos(heridos);
 		conflictoDoc.put("heridos",heridos);
 
-		collectionConflicto.insertOne(conflictoDoc);
 
-		System.out.println("Añadir Grupo al conflicto");
-		//te muestra los grupos
+
+		//collectionConflicto.insertOne(conflictoDoc);
+
+
+		System.out.println("¿desea añadir Grupo al conflicto? s/n");
 		for (Document doc: collectionGrupoArmado.find()) {
 			System.out.println(doc.toJson());
 		}
-		//---------
-		//boolean bololo = true;
-		//while(bololo) {
-			System.out.println("introducir id's de los Grupos a añadir minimo 2");
+
+		String respuesta = teclatStrings.next();
+		List<Document> hijos = new ArrayList<>();
+		if(!respuesta.equalsIgnoreCase("s")){
+			collectionConflicto.insertOne(conflictoDoc);
+		}
+		while(respuesta.equalsIgnoreCase("s")) {
+
+			conflictoDoc.put("grupoArmado", asList());
+
+			System.out.println("introducir id del grupo");
 			int idGrupo = teclatNumeros.nextInt();
-			conflictoDoc = collectionGrupoArmado.find(eq("_id", idGrupo)).first();
-			//GrupoArmado gaInsert = new GrupoArmado(document);
-			System.out.println(conflictoDoc.toJson());
-
-			GrupoArmado gaI = mapper.readValue(conflictoDoc.toJson().replace("_id", "id"), GrupoArmado.class);
-
-			BasicDBObject documentGrupo = new BasicDBObject();
-
-
-			//conf.getListaGruposArmados().add(gaI);
+			Document grupoExtraer = collectionGrupoArmado.find(eq("_id", idGrupo)).first();
+			GrupoArmado gaI = mapper.readValue(grupoExtraer.toJson().replace("_id", "id"), GrupoArmado.class);
+			Document documentGrupo = new Document();
 
 			documentGrupo.put("_id", gaI.getId());
 			documentGrupo.put("nombre", gaI.getNombre());
 			documentGrupo.put("bajas", gaI.getBajas());
 
-			conflictoDoc.put("grupoArmado", documentGrupo);
 
-			collectionConflicto.updateOne(conflictoDoc, )
+			hijos.add(documentGrupo);
+
+			conf.getListaGruposArmados().add(gaI);
+			System.out.println("ARRAY: "+conf.getListaGruposArmados().size());
+
+			conflictoDoc.put("grupoArmado",hijos);
+
+			System.out.println("JSON: "+conflictoDoc.toJson());
+			//collectionConflicto.insertOne(conflictoDoc);
+
+
+			System.out.println("¿desea añadir otro? s/n");
+			String respuesta2 = teclatStrings.next();
+			if(respuesta2.equalsIgnoreCase("s")){
+
+
+				respuesta = respuesta2;
+			}else{
+				System.out.println("Grupo insertado en conflicto");
+				collectionConflicto.insertOne(conflictoDoc);
+				//collectionConflicto.updateOne(conflictoDoc,documentGrupo);
+				//conflictoDoc.put("grupoArmado", conf.getListaGruposArmados());
+				//collectionConflicto.insertOne(conflictoDoc);
+				break;
+			}
+		}
+		/*if(respuesta.equalsIgnoreCase("s")){
+			//te muestra los grupos
+
+				System.out.println("introducir id del grupo");
+				int idGrupo = teclatNumeros.nextInt();
+				Document grupoExtraer = collectionGrupoArmado.find(eq("_id", idGrupo)).first();
+				GrupoArmado gaI = mapper.readValue(grupoExtraer.toJson().replace("_id", "id"), GrupoArmado.class);
+				Document documentGrupo = new Document();
+
+				documentGrupo.put("_id", gaI.getId());
+				documentGrupo.put("nombre", gaI.getNombre());
+				documentGrupo.put("bajas", gaI.getBajas());
+
+				conflictoDoc.put("grupoArmado", documentGrupo);
+
+				collectionConflicto.insertOne(conflictoDoc);
+
+				System.out.println("Grupo insertado en conflicto");
+			}*/
+
+
 			///document.put("grupoArmado",);
 			//collectionConflicto.insertOne(conflictoDoc);
 	/*		Scanner fin = new Scanner(System.in);
