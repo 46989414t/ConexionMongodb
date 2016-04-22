@@ -108,7 +108,34 @@ public class MongoDBJDBC {
 
    }
 
-	private static void infoConflicto(MongoCollection<Document> collectionConflicto, MongoCollection<Document> collectionGrupoArmado) {
+	private static void infoConflicto(MongoCollection<Document> collectionConflicto, MongoCollection<Document> collectionGrupoArmado) throws IOException {
+		Scanner teclatStrings = new Scanner(System.in);
+		for (Document doc: collectionConflicto.find()) {
+			System.out.println(doc.toJson());
+		}
+		System.out.println("Introduce nombre del conflicto");
+		String nombreConflicto = teclatStrings.nextLine();
+		ObjectMapper mapper = new ObjectMapper();
+
+
+
+		Document nombreConflictoExtraer = collectionConflicto.find(eq("nombre", nombreConflicto)).first();
+		System.out.println("CONF: "+nombreConflictoExtraer);
+			Conflicto confInfo = mapper.readValue(nombreConflictoExtraer.toJson()
+					.replace("_id", "id").replace("grupoArmado", "listaGruposArmados"), Conflicto.class);
+
+			System.out.println("ID: "+confInfo.getId());
+			System.out.println("NOMBRE: "+confInfo.getNombre());
+			System.out.println("ZONA: "+confInfo.getZona());
+			System.out.println("HERIDOS: "+confInfo.getHeridos());
+			System.out.println("GRUPOS");
+			Iterator<GrupoArmado> nombreIterator = confInfo.getListaGruposArmados().iterator();
+			while(nombreIterator.hasNext()){
+				GrupoArmado elemento = nombreIterator.next();
+				System.out.print(elemento.toString());
+			}
+
+
 
 	}
 
@@ -158,41 +185,57 @@ public class MongoDBJDBC {
 		}
 
 		String respuesta = teclatStrings.next();
-		List<Document> hijos = new ArrayList<>();
+		List<Document> hijosDeConflicto = new ArrayList<>();
+		List<Document> hijosDeGrupo = new ArrayList<>();
 		if(!respuesta.equalsIgnoreCase("s")){
 			collectionConflicto.insertOne(conflictoDoc);
 		}
 		while(respuesta.equalsIgnoreCase("s")) {
 
-			conflictoDoc.put("grupoArmado", asList());
+
 
 			System.out.println("introducir id del grupo");
+
+			//Cogiendo el id del grupo se genera el objeto grupo y se añade al array de conflicto.
+			//
 			int idGrupo = teclatNumeros.nextInt();
 			Document grupoExtraer = collectionGrupoArmado.find(eq("_id", idGrupo)).first();
 			GrupoArmado gaI = mapper.readValue(grupoExtraer.toJson().replace("_id", "id"), GrupoArmado.class);
+			conf.getListaGruposArmados().add(gaI);
+			System.out.println("ARRAY: "+conf.getListaGruposArmados().size());
 			Document documentGrupo = new Document();
 
 			documentGrupo.put("_id", gaI.getId());
 			documentGrupo.put("nombre", gaI.getNombre());
 			documentGrupo.put("bajas", gaI.getBajas());
 
+			conflictoDoc.put("grupoArmado", asList());
+			hijosDeConflicto.add(documentGrupo);
+			conflictoDoc.put("grupoArmado",hijosDeConflicto);
+/*
+			//el conflicto también se añade al grupo para demostrar la relacion N-M
+			Document docConflictoAdd = new Document();
+			documentGrupo.put("conflicto", asList());
 
-			hijos.add(documentGrupo);
+			docConflictoAdd.put("_id", conf.getId());
+			docConflictoAdd.put("nombre", conf.getNombre());
+			docConflictoAdd.put("zona", conf.getZona());
+			docConflictoAdd.put("heridos",conf.getHeridos());
 
-			conf.getListaGruposArmados().add(gaI);
-			System.out.println("ARRAY: "+conf.getListaGruposArmados().size());
+			hijosDeGrupo.add(docConflictoAdd);
 
-			conflictoDoc.put("grupoArmado",hijos);
+			documentGrupo.put("conflicto",docConflictoAdd);
 
-			System.out.println("JSON: "+conflictoDoc.toJson());
-			//collectionConflicto.insertOne(conflictoDoc);
+			System.out.println("GRUPO FASE 1: "+ grupoExtraer);
+			System.out.println("GRUPO FASE 2: "+ documentGrupo);
+
+*/
 
 
 			System.out.println("¿desea añadir otro? s/n");
 			String respuesta2 = teclatStrings.next();
 			if(respuesta2.equalsIgnoreCase("s")){
-
-
+//				collectionGrupoArmado.replaceOne(grupoExtraer, documentGrupo);
 				respuesta = respuesta2;
 			}else{
 				System.out.println("Grupo insertado en conflicto");
@@ -203,38 +246,6 @@ public class MongoDBJDBC {
 				break;
 			}
 		}
-		/*if(respuesta.equalsIgnoreCase("s")){
-			//te muestra los grupos
-
-				System.out.println("introducir id del grupo");
-				int idGrupo = teclatNumeros.nextInt();
-				Document grupoExtraer = collectionGrupoArmado.find(eq("_id", idGrupo)).first();
-				GrupoArmado gaI = mapper.readValue(grupoExtraer.toJson().replace("_id", "id"), GrupoArmado.class);
-				Document documentGrupo = new Document();
-
-				documentGrupo.put("_id", gaI.getId());
-				documentGrupo.put("nombre", gaI.getNombre());
-				documentGrupo.put("bajas", gaI.getBajas());
-
-				conflictoDoc.put("grupoArmado", documentGrupo);
-
-				collectionConflicto.insertOne(conflictoDoc);
-
-				System.out.println("Grupo insertado en conflicto");
-			}*/
-
-
-			///document.put("grupoArmado",);
-			//collectionConflicto.insertOne(conflictoDoc);
-	/*		Scanner fin = new Scanner(System.in);
-			System.out.println("Quiele salí?");
-			String sal = fin.next();
-
-			if(sal.equalsIgnoreCase("s")){
-				bololo = false;
-			}
-		}*/
-		/////////////////////////////////////////////
 
 	}
 
