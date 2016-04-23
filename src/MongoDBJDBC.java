@@ -21,11 +21,6 @@ import static java.util.Arrays.asList;
 public class MongoDBJDBC {
 
    public static void main( String args[] ) {
-	   /**Comandos para crear la base de datos desde MONGO
-		* crear bbdd: use pacFinal
-		* crear colecciones:
-		*/
-
 
 	   MongoClient mongoClient = null;
 
