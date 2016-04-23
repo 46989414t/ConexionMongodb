@@ -62,4 +62,11 @@ public class Conflicto {
     public void setListaGruposArmados(ArrayList<GrupoArmado> listaGruposArmados) {
         this.listaGruposArmados = listaGruposArmados;
     }
+
+    @Override
+    public String toString() {
+        String info = "Nombre: "+nombre+", zona: "+zona+", num heridos "+heridos;
+
+        return info;
+    }
 }
